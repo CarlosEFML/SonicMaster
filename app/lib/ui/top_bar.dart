@@ -13,6 +13,7 @@ import 'ai_preset_dialog.dart';
 import 'connection_controls.dart';
 import 'fullscreen_button.dart';
 import 'global_settings_dialog.dart';
+import 'preset_backup_actions.dart';
 import 'preset_rail.dart';
 import 'save_preset_dialog.dart';
 import 'sonic_controls.dart';
@@ -174,6 +175,22 @@ class TopBar extends ConsumerWidget {
                         padding: metrics.topBarIconPadding,
                         onPressed: (isConnected && !isLoading)
                             ? () => importPreset(ref)
+                            : null,
+                      ),
+                      // Full backup of the 50 User presets (P01–P50) to one
+                      // file, and the matching restore.
+                      SonicIconButton(
+                        icon: Icons.backup,
+                        padding: metrics.topBarIconPadding,
+                        onPressed: (isConnected && !isLoading)
+                            ? () => runBackupAll(context, ref)
+                            : null,
+                      ),
+                      SonicIconButton(
+                        icon: Icons.settings_backup_restore,
+                        padding: metrics.topBarIconPadding,
+                        onPressed: (isConnected && !isLoading)
+                            ? () => runRestoreBackup(context, ref)
                             : null,
                       ),
                       SonicIconButton(

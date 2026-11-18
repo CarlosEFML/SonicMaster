@@ -11,9 +11,14 @@ import 'sonic_controls.dart';
 /// the shared status text and the import progress fraction, so it tracks both an
 /// indeterminate phase (e.g. NAM conversion) and the chunked upload live.
 class ImportProgressDialog extends ConsumerWidget {
-  const ImportProgressDialog({super.key, required this.title});
+  const ImportProgressDialog({super.key, required this.title, this.cancel});
 
   final String title;
+
+  /// When set, a Cancel button is shown under the progress bar. Pressing it
+  /// flips this notifier to true; the running operation polls it and stops at
+  /// the next safe point, and the caller closes the dialog.
+  final ValueNotifier<bool>? cancel;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -45,6 +50,18 @@ class ImportProgressDialog extends ConsumerWidget {
             if (progress != null) ...[
               const SizedBox(height: 18),
               _ProgressBar(value: progress),
+            ],
+            if (cancel case final cancel?) ...[
+              const SizedBox(height: 18),
+              ValueListenableBuilder<bool>(
+                valueListenable: cancel,
+                builder: (_, requested, _) => Center(
+                  child: SonicButton(
+                    label: requested ? 'Cancelling…' : 'Cancel',
+                    onPressed: requested ? null : () => cancel.value = true,
+                  ),
+                ),
+              ),
             ],
             const SizedBox(height: 6),
           ],
